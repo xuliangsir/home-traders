@@ -105,6 +105,7 @@
                 photoList:[],
                 ruleForm: {
                     name:'',//服务名称*
+                    photo:'',
                     serviceimgurl:'',//服务相册*
                     description:"",//服务描述
                     price:"",//价格*
@@ -169,8 +170,8 @@
                         message: '请输入商家简介',
                         trigger: 'blur'
                     }]
-                },
-                photoList:[]
+                }
+                //photoList:[]
             };
         },
         methods:{
@@ -184,7 +185,7 @@
             submitForm2(formName){
                 this.$refs[formName].validate((valid) => {
                      var _this=this;
-                    if (valid) {
+                    if (valid){
                         //alert('123');
                         console.log('@1234');
                         var _this=this;
@@ -192,11 +193,12 @@
 				    	var phone=sessionStorage.getItem("phone");
 				    	var shopid=sessionStorage.getItem("shopid");
 				    	console.log('========myshopid--YES=========',shopid)
-                        console.log(_this.ruleForm.photo);
+                        //console.log(_this.ruleForm.photoList);
                         var params={
                             shopid:shopid,//店铺id
 				    		name: _this.ruleForm.name,//服务名称
-                            serviceimgurl:_this.ruleForm.serviceimgurl,//服务相册
+                            //serviceimgurl:_this.ruleForm.serviceimgurl,//服务相册
+                            serviceimgurl:_this.photoList[0],
                             description: _this.ruleForm.description, //订购须知
                             price:_this.ruleForm.price,//价格
                             unit:_this.ruleForm.unit,//单位
@@ -234,10 +236,10 @@
                 this.$refs[formName].resetFields();
             },
 		    //相册部分
-		    checkImg() {
+		    checkImg(){
 		      this.$refs.file.click();
 		    },
-		    getFile(e) {
+		    getFile(e){
 		      this.file = e.target.files[0];
 		      this.getsign();
 		    },
@@ -277,13 +279,17 @@
                      formData,config
                     ).then(function(res){
                         //console.log('---999999---formData上传格式----------',formData);
-                        console.log('000000000图片上传2000000000',res);
+                        console.log('11111111111========TP',res);
                          if(res.data.code==0){
                             //console.log(data.data.data.download_url)
-                            _this.ruleForm.photo = res.data.data.download_url;
-                            _this.photoList.push(_this.ruleForm.photo);
-                            console.log(_this.photoList)
-                            console.log('-----------图片上传-----------',_this.ruleForm.photo);
+                            //_this.ruleForm.photo = res.data.data.download_url;
+                            //_this.photoList.push(res.data.data.download_url);
+                               console.log('222222222222222图片上传2000000000',res.data.data.download_url);
+                            
+                            _this.photoList.push(res.data.data.download_url);
+                            _this.ruleForm.serviceimgurl=_this.photoList[0];
+                            console.log('33333333333333图片数组',_this.photoList);
+                            console.log('-----------允许图片上传-----------',_this.ruleForm.serviceimgurl);
                             console.log('-----------图片上传-------------',_this.photoList);
                          }else{
                              _this.retryGetSign();
@@ -291,8 +297,6 @@
 			         },function(){
                          _this.retryGetSign();
                      })
-
-                   
                 } catch (error) {
                     this.retryGetSign();
                 }

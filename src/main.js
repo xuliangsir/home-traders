@@ -25,7 +25,7 @@ Vue.use(Vuex)
 //Vue.use(VueResource);
 
 
-   Vue.use(vueAxios, axios)
+Vue.use(vueAxios, axios)
 //Vue.prototype.$http = axios
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'

@@ -172,9 +172,10 @@ export default {
 	    	var _this=this;
 	    	var userid=parseInt(sessionStorage.getItem("userid")) ;
 	    	var phone=sessionStorage.getItem("phone");
-	    	this.axios.get("/home/api/getshopcertifyInfo?userid="+userid+"&phone="+phone).then(function(res) {
-				if(res.data.success==true){
+	    	this.$http.get("/home/api/getshopcertifyInfo?userid="+userid+"&phone="+phone).then(function(res) {
+				if(res.data.success==true){					
 					var datad=res.data.data;
+					console.log('-------------%%%获取店铺认证店铺认证接口调试----------------',datad,userid,phone)
 					if(datad.userid){
 						sessionStorage.setItem("userid",datad.userid);
 					}
@@ -189,7 +190,7 @@ export default {
 					}else{
 						var type="个人";
 					}
-					console.log('-------------获取店铺认证店铺认证接口调试----------------',datad)
+					
 							_this.photoList=datad.licenceurl,
 							_this.photoList1=datad.identitycardphoto,
 							_this.ruleForm1.gszz=datad.licencename;
@@ -224,36 +225,36 @@ export default {
 	    methods:{
 	      submitForm(formName) {
 	        this.$refs[formName].validate((valid) => {
-	        if (valid) {
+	        if(valid){
 	          	var _this=this;
-		    	var userid=parseInt(sessionStorage.getItem("userid")) ;
-		    	var phone=sessionStorage.getItem("phone");
-		    	console.log(userid,phone)
-		    	if(_this.ruleForm1.region=="公司"){
-		    		var mtype=0;
-		    	}else if(_this.ruleForm1.region=="个人"){
-		    		var mtype=1;
-		    	}
-		    	//console.log(_this.photoList)
-		    	//console.log(_this.photoList1)
-					var params={
-		            userid: userid,
-		            phone:phone,
-		            licencename:_this.ruleForm1.gszz,
-		            type:mtype,
-		            licenceurl:_this.photoList,
-		            creditcode:_this.ruleForm1.credit,
-		            licenceregnum:_this.ruleForm1.registration,
-		            registaddress:_this.ruleForm1.address,
-		            licencelocation:_this.ruleForm1.seat,
-		            legalentity:_this.ruleForm1.representative,
-		            limittimebegin:_this.value1,
-		            limittimeend:_this.value2,
-		            identitycardphoto:_this.photoList1,
-		            name:_this.ruleForm1.linkman,
-		            identitycardnum:_this.ruleForm1.idcard
-		        }
-		    	_this.$http.post("/home/api/addshopcertifyInfo",params).then(function(res) {
+							var userid=parseInt(sessionStorage.getItem("userid")) ;
+							var phone=sessionStorage.getItem("phone");
+							console.log(userid,phone)
+							if(_this.ruleForm1.region=="公司"){
+								var mtype=0;
+							}else if(_this.ruleForm1.region=="个人"){
+								var mtype=1;
+							}
+							//console.log(_this.photoList)
+							//console.log(_this.photoList1)
+							var params={
+										userid:userid,
+										phone:phone,
+										licencename:_this.ruleForm1.gszz,
+										type:mtype,
+										licenceurl:_this.photoList,
+										creditcode:_this.ruleForm1.credit,
+										licenceregnum:_this.ruleForm1.registration,
+										registaddress:_this.ruleForm1.address,
+										licencelocation:_this.ruleForm1.seat,
+										legalentity:_this.ruleForm1.representative,
+										limittimebegin:_this.value1,
+										limittimeend:_this.value2,
+										identitycardphoto:_this.photoList1,
+										name:_this.ruleForm1.linkman,
+										identitycardnum:_this.ruleForm1.idcard
+								}
+							_this.$http.post("/home/api/addshopcertifyInfo",params).then(function(res) {
 		        	
 
 
@@ -306,42 +307,42 @@ export default {
 		          this.retryGetSign();
 			    }
 			},
-			async uploadWithSign(sign) {
+			uploadWithSign(sign) {
 				if (!this.file) {
 						return;
 				}
-				var _this;
+				var _this=this;
 				let formData = new FormData();
-				formData.append("FileContent", this.file);
+				formData.append("FileContent",_this.file);
 				console.log('--------图片上传的format-----------',formData);
 				try {
-					var _this=this;
-					let config = {
-							headers: {'Content-Type': 'multipart/form-data'}
-					}
-					await this.axios.post("http://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
-						formData,config
-					).then(function(data) {
-						if(data.data.code==0){
-							console.log('======图片上传========',data.data.data.download_url)
-							_this.ruleForm1.photo = data.data.data.download_url;
-							if(!_this.photoList){
-								_this.photoList=[];
-							}else if(_this.photoList.length>4){
-								_this.$message.error('保存失败');
-								return;
-							}
-							_this.photoList.push(data.data.data.download_url);
-							
-							
-						}else{
-								_this.retryGetSign();
+						var _this=this;
+						let config = {
+								headers: {'Content-Type': 'multipart/form-data'}
 						}
-					},function(){
-							_this.retryGetSign();
-					})
-
 						
+						this.$http.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign="+_this.sign,
+							formData,config
+						).then(function(res){
+								//console.log('---999999---formData上传格式----------',formData);
+								console.log('11111111111========TP',res);
+									if(res.data.code==0){
+										//console.log(data.data.data.download_url)
+										//_this.ruleForm.photo = res.data.data.download_url;
+										//_this.photoList.push(res.data.data.download_url);
+												console.log('222222222222222图片上传2000000000',res.data.data.download_url);
+										
+										_this.photoList.push(res.data.data.download_url);
+										//_this.ruleForm.serviceimgurl=_this.photoList[0];
+										console.log('33333333333333图片数组',_this.photoList);
+										console.log('-----------允许图片上传-----------',_this.ruleForm.serviceimgurl);
+										console.log('-----------图片上传-------------',_this.photoList);
+									}else{
+											_this.retryGetSign();
+									}
+				},function(){
+									_this.retryGetSign();
+							})
 				} catch (error) {
 						this.retryGetSign();
 				}
@@ -396,7 +397,7 @@ export default {
 									//headers: {'X-Requested-With': 'XMLHttpRequest'},
 									headers: {'Content-Type': 'multipart/form-data'}
 							}
-							_this.axios.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
+							_this.$http.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
 								formData,config
 							).then(function(data) {
 										// if(data.data.code==0){

@@ -31,7 +31,7 @@
                 percent: 0
             }
         },
-        methods: {
+        methods:{
             add(){
                 this.$refs.file.click()
             },

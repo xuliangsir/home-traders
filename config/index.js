@@ -23,14 +23,14 @@ module.exports = {
     },
     dev: {
         env: require('./dev.env'),
-        port: "8082",
+        port: "8083",
         autoOpenBrowser: true,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
             '/home': {
                 //后台接口地址
-                target: 'http://123.207.161.108:3000',
+                target: 'https://www.58cleaning.cn',
                 //这里可以模拟服务器进行get和post参数的传递
                 changeOrigin: true,
                 //前端所有的/home请求都会请求到后台的/home路径之下
@@ -47,7 +47,6 @@ module.exports = {
 //              pathRewrite: {
 //                  '^/ueditor': '/ueditor'
 //              }
-
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

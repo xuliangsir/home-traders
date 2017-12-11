@@ -20,12 +20,12 @@
         </el-form-item>
         <!-- 项目描述 -->
         <el-form-item label="服务描述">
-            <el-input type="textarea" v-model="ruleForm.description" :autosize="{ minRows: 2, maxRows: 10 }"></el-input>
+            <el-input type="textarea" v-model="ruleForm.description" :autosize="{ minRows: 2, maxRows: 10 }">{{ruleForm.description}}</el-input>
         </el-form-item>
         <!--销售价格-->
         <el-form-item label="销售价格" required>
             <div class="block">
-		    <el-input  style="width:150px;margin-right:20px;" v-model="ruleForm.price"></el-input>
+		    <el-input  style="width:150px;margin-right:20px;" v-model="ruleForm.price">{ruleForm.price}</el-input>
             单位
             <el-input  style="width:150px;margin-right:20px;" v-model="ruleForm.unit"></el-input>
 		    原价
@@ -89,9 +89,16 @@
 </template>
 <script>
     export default{
+        props:['girl-serverid'],
+        // props:{
+        //     type:Array，
+        //     default:[0,0,0]
+        // },
         data(){
             return{
                 checkboxGroup1:["周一"],
+                broadServerId:'',
+                serviceid:this.$attrs.serviceid,
                 //checkboxGroup2:["北京"],
                 //cities:["北京","上海","广州","杭州","深圳"],
             	resetDom: true,
@@ -104,7 +111,9 @@
                 sign:null,
                 photoList:[],
                 tableData:[],
-                ruleForm: {
+                //ruleForm
+                ruleForm:{
+                    serviceid:'',
                     name:'',//服务名称*
                     serviceimgurl:'',//服务相册*
                     description:"",//服务描述
@@ -176,6 +185,12 @@
         },
         //组件创建前
         beforeCreate(){
+            var _this=this;
+            //console.log(serviceid);
+            // var json=eval(sessionStorage.getItem("row"));
+            // for(var name in json){
+            //     _this.ruleForm[name]=json[name];
+            // }
             //获取服务种类--------------------
             //var _this=this;
             //getServerList()
@@ -209,50 +224,83 @@
             // //获取服务信息-----------------------
             // //getServerItems();
             // //function getServerItems(){
-            var _this=this;
-            var userid=parseInt(sessionStorage.getItem("userid"));
-            var phone=sessionStorage.getItem("phone");
-            //----------获取项目类型分类接口方案------------------
-            try{
-                //_this.shopid=parseInt(sessionStorage.getItem("shopid"))
-                var shopid=parseInt(sessionStorage.getItem("shopid"));
+            // var _this=this;
+            // var userid=parseInt(sessionStorage.getItem("userid"));
+            // var phone=sessionStorage.getItem("phone");
+            // //----------获取项目类型分类接口方案------------------
+            // try{
+            //     //_this.shopid=parseInt(sessionStorage.getItem("shopid"))
+            //     var shopid=parseInt(sessionStorage.getItem("shopid"));
                 
-                console.log('==========请求获取item服务列表=shopid=YE============',shopid)
-                let config = {
-                    headers: {'Content-Type': 'multipart/form-data'}
-                }
-                this.axios.get("/home/api/service/get?shopid="+shopid).then(function(res){
-                    var datad=res.data.data;
-                    if(res.data.success==true){
-                        //console.log('==========请求服务item列表==============',data)
+            //     console.log('==========请求获取item服务列表=shopid=YE============',shopid)
+            //     let config = {
+            //         headers: {'Content-Type': 'multipart/form-data'}
+            //     }
+            //     this.axios.get("/home/api/service/get?shopid="+shopid).then(function(res){
+            //         var datad=res.data.data;
+            //         if(res.data.success==true){
+            //             //console.log('==========请求服务item列表==============',data)
                         
-                        var serverItems=[];
-                        for(var i=0; i<datad.length; i++){
-                            var serverItem={};
-                            for(var name in datad[i]){
-                                serverItem[name]=datad[i][name];                                                                                      
-                             }
-                             serverItem.priceUnit=serverItem.price+'/'+serverItem.unit;
-                             serverItems.push(serverItem);
-                             _this.ruleForm[i]=serverItems[i];
-                             //这里写一下
-                        }
-                        console.log('=====HHHHH=====serverItems==============',serverItems,datad,_this.tableData)
-                        _this.$message.success('加载成功YE');
-                    }else{
-                        _this.$message.error('加载失败YE');
-                    }
-                },function(){
-                    _this.$message.error('加载失败YE');
-                })
+            //             var serverItems=[];
+            //             for(var i=0; i<datad.length; i++){
+            //                 var serverItem={};
+            //                 for(var name in datad[i]){
+            //                     serverItem[name]=datad[i][name];                                                                                      
+            //                  }
+            //                  serverItem.priceUnit=serverItem.price+'/'+serverItem.unit;
+            //                  serverItems.push(serverItem);
+            //                  _this.ruleForm[i]=serverItems[i];
+            //                  //这里写一下
+            //             }
+            //             console.log('=====HHHHH=====serverItems==============',serverItems,datad,_this.tableData)
+            //             _this.$message.success('加载成功YE');
+            //         }else{
+            //             _this.$message.error('加载失败YE');
+            //         }
+            //     },function(){
+            //         _this.$message.error('加载失败YE');
+            //     })
 
-            }catch(err) {
-                //this.retryGetSign();
-                _this.shopid=parseInt(sessionStorage.getItem("shopid"))
-                var shopid=parseInt(sessionStorage.getItem("shopid"))||_this.shopid;
-            }
+            // }catch(err) {
+            //     //this.retryGetSign();
+            //     _this.shopid=parseInt(sessionStorage.getItem("shopid"))
+            //     var shopid=parseInt(sessionStorage.getItem("shopid"))||_this.shopid;
+            // }
             //}
+            // this.$bus.$on("broadServerId",function(data){
+            //     //_this.marskStyle=false;
+            //     //var broadServerId=data;
+                
+                
+            //     this.ruleForm=data;
+            //     this.ruleForm.serviceid=data.serviceid;
+            //     console.log('&&郝清振&&',this.ruleForm);
+            // })
         },
+        created(){
+            console.log('(1)(2)(3)');
+        },
+        //接收子事件
+        mounted(){
+            var _this=this;
+            // this.$bus.$on("broadServerId",function(data){
+            //     //_this.marskStyle=false;
+            //     //var broadServerId=data;
+                
+                
+                
+            //     for(var name in data){
+            //         _this.ruleForm[name]=data[name];
+            //     }
+            //     //sessionStorage.setItem("row");
+            //     _this.serviceid=data.serviceid;
+            //     //_this.ruleForm.serviceid=data.serviceid;
+            //     console.log('--郝清振--',_this.ruleForm);
+            // })
+        },
+        // beforeDestroy(){
+        //     this.$bus.$off("broadServerId");
+        // },
         methods:{
         	closeBtn(){
                 this.$bus.$emit("closeEditServer");
@@ -272,11 +320,13 @@
 				    	var phone=sessionStorage.getItem("phone");
 				    	var shopid=sessionStorage.getItem("shopid");
 				    	console.log('========myshopid--YES=========',shopid)
-                        console.log(_this.ruleForm.photo);
+                        console.log('|||\\\|||',_this.serviceid);
                         var params={
+                            serviceid:_this.serviceid,
                             shopid:shopid,//店铺id
 				    		name: _this.ruleForm.name,//服务名称
-                            serviceimgurl:_this.ruleForm.serviceimgurl,//服务相册
+                            //serviceimgurl:_this.ruleForm.serviceimgurl,//服务相册
+                            serviceimgurl:_this.photoList[0],
                             description: _this.ruleForm.description, //订购须知
                             price:_this.ruleForm.price,//价格
                             unit:_this.ruleForm.unit,//单位
@@ -301,11 +351,11 @@
                         // city	否	string	定向城市
                         // sortNo	否	string	排序号
                         // isonline
-                        var params={
-                            serviceid:'',
-                            shopid:shopid,
-                            name:''
-                        }
+                        // var params={
+                        //     serviceid:_this.ruleForm.serviceid,
+                        //     shopid:_this.ruleForm.shopid,
+                        //     //name:''
+                        // }
 				    	_this.axios.post("/home/api/service/update",params).then(function(res){
                             console.log('-----777777777788修改服务接口郝清振大家好才是真的好-YED----------',params,res)
                             var data=res.data;
@@ -324,6 +374,7 @@
                     }
                 });
             },
+
             resetForm(formName){
                 this.$refs[formName].resetFields();
             },
@@ -354,45 +405,42 @@
 		      }
 		    },
             uploadWithSign(sign) {
-				if (!this.file) {
-						return;
-				}
-				var _this=this;
-				let formData = new FormData();
-				formData.append("FileContent", this.file);
-				console.log('--------图片上传的format-----------',formData);
-				try {
-					var _this=this;
-					let config = {
-							headers: {'Content-Type': 'multipart/form-data'}
-					}
-					this.$http.post("http://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
-						formData,config
-					).then(function(data) {
-						if(data.data.code==0){
-							console.log('======图片上传========',data.data.data.download_url)
-							_this.ruleForm1.photo = data.data.data.download_url;
-							if(!_this.photoList){
-								_this.photoList=[];
-							}else if(_this.photoList.length>4){
-								_this.$message.error('保存失败');
-								return;
-							}
-							_this.photoList.push(data.data.data.download_url);
-							
-							
-						}else{
-								_this.retryGetSign();
-						}
-					},function(){
-							_this.retryGetSign();
-					})
+                var _this=this;
+                if (!this.file) {
+                    return;
+                }
+                var formData = new FormData();
+                formData.append("FileContent", _this.file);
+                console.log('&&&&&&&&图片容器',formData,_this.file);
+                try {
+                    //var _this=this;
+                    let config = {
+                        headers: {'Content-Type': 'multipart/form-data'}
+                    }                    
+                    this.$http.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
+                     formData,config
+                    ).then(function(res){
+                        //console.log('---999999---formData上传格式----------',formData);
+                        console.log('000000000图片上传2000000000',res);
+                         if(res.data.code==0){
+                            //console.log(data.data.data.download_url)
+                            _this.ruleForm.photo = res.data.data.download_url;
+                            _this.photoList.push(_this.ruleForm.photo);
+                            console.log(_this.photoList)
+                            console.log('-----------图片上传-----------',_this.ruleForm.photo);
+                            console.log('-----------图片上传-------------',_this.photoList);
+                         }else{
+                             _this.retryGetSign();
+                         }
+			         },function(){
+                         _this.retryGetSign();
+                     })
 
-						
-				} catch (error) {
-						this.retryGetSign();
-				}
-			},
+                   
+                } catch (error) {
+                    this.retryGetSign();
+                }
+            },
 		    retryGetSign() {
 		      this.retryNum++;
 		      if (this.retryNum < 5) {

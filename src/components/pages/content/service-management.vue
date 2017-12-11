@@ -35,11 +35,10 @@
 				</el-form>
 		    </el-col>
 		  <el-button  @click="onStyle">分类管理</el-button>
-			<el-button  @click="onServer">添加项目</el-button>
+			<el-button  @click.stop="onServer">添加项目</el-button>
 			<!--星期-结束-->
 		</div>
 		<!--nav 结束-->
-		
 		<!--分布表 开始-->
 		<el-table
 	     :data="tableDataList"
@@ -97,18 +96,19 @@
 				<div class="addphoto">
 					<el-button
           size="mini" class="addphotofile"
-          @click="handleAdd(scope.$index, scope.row)">添加图片</el-button>
+          @click.stop="handleAdd(scope.$index, scope.row)">添加图片</el-button>
 					<input type="file" size="mini" class="addphotoabso"
            value="添加图片" @change="getFile" ref="file" accept="image/*" v-if="resetDom"/>
 				</div>
 	        <el-button
 	          size="mini"
-	          @click="handleEdit(scope.$index, scope.row,scope.$index)">编辑</el-button>
+			  prop="serviceid"
+	          @click.stop="handleEdit(scope.$index, scope.row)">编辑</el-button>
 	        <el-button
 	          size="mini"
 	          type="danger"
 	          style="height:35px;"
-	          @click="handleDelete(scope.$index, scope.row,scope.$index)">删除</el-button>
+	          @click.stop="handleDelete(scope.$index, scope.row,scope.$index)">删除</el-button>
 	      </template>
 	    </el-table-column> 
 	  </el-table>
@@ -121,9 +121,10 @@
 			<add-style></add-style>
 		</div>
 		<div class="marsk" v-if="marskEditServer">
-			<edit-service></edit-service>
+			<edit-service :girl-serverid="serverid"></edit-service>
 		</div>				
 	</div>
+	
 </template>
 <script>
 import addService from './add-service-management.vue'
@@ -138,6 +139,7 @@ export default{
 			shopid:'',
 			marskStyle:false,
 			marskServer:false,
+			serverid:'999',//服务id
 			marskEditServer:false,
 			editEditServer:false,
 			activeName2:"全部项目",
@@ -258,20 +260,15 @@ export default{
 				var datad=res.data.data;
 				if(res.data.success==true){
 					//console.log('==========请求服务item列表==============',data)
-					
 					var serverItems=[];
 					for(var i=0; i<datad.length; i++){
 						var serverItem={};
 						for(var name in datad[i]){
 							serverItem[name]=datad[i][name];
 						}
-						serverItem.priceUnit=serverItem.price+'/'+serverItem.unit;
+						serverItem.priceUnit=''+serverItem.price+'元/'+serverItem.unit;
 						serverItems.push(serverItem);
 						_this.tableData=serverItems;
-
-
-
-
 						//这里写一下
 					}
 					console.log('=====HHHHH=====serverItems==============',serverItems,datad,_this.tableData)
@@ -282,7 +279,6 @@ export default{
 			},function(){
 				_this.$message.error('加载失败YE');
 			})
-
 		}catch(err) {
 			//this.retryGetSign();
 			_this.shopid=parseInt(sessionStorage.getItem("shopid"))
@@ -290,6 +286,9 @@ export default{
 		}
 		//}
 	},
+	// updated(){
+	// 	@update:bar="e => foo = e"
+	// },
 	//计算属性
 	computed:{
 		tableDataList(){
@@ -307,15 +306,23 @@ export default{
 		var _this=this;
 		this.$bus.$on("closeStyle",function(data){
 			_this.marskStyle=false;
+			//console.log('}}}}');
 		})
 		this.$bus.$on("closeServer",function(data){
 			_this.marskServer=false;
-		})
-			
+		})			
 		this.$bus.$on("closeEditServer",function(data){
 			_this.marskEditServer=false;
 		})
 	},
+	// beforeDestroy(){
+    // 	this.$bus.$off("broadServerId");
+    // },
+	// beforeDestroy(){
+	// 	this.$bus.$off("closeStyle");
+	// 	this.$bus.$off("closeServer");
+	// 	this.$bus.$off("closeEditServer");
+	// },
 	//添加服务，编辑服务,添加类型,
 	components:{
 		addService,
@@ -347,9 +354,14 @@ export default{
 			this.marskServer=true;
 		},
 		//修改服务类型
-		handleEdit(index,row,e){
+		handleEdit(index,row){
 			this.marskEditServer=true;
-			//console.log('()()()',index, row,e);
+			//serviceid
+			//this.$bus.$emit("broadServerId",serverid); 
+			//this.$bus.$emit("broadServerId",row);
+			//sessionStorage.setItem('row',row);
+			this.serverid=row.serverid;
+			console.log('(5)(6)(7)',index,row,row.serviceid);
 		},
 		//删除服务类型
 		handleDelete(index, row) {
@@ -404,7 +416,7 @@ export default{
 				let config={
 						headers:{'Content-Type':'multipart/form-data'}
 				}
-				this.$http.jsnp("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
+				this.$http.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
 					formData,config
 					
 				).then(function(res){

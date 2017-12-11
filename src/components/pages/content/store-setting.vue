@@ -29,7 +29,7 @@
             <el-input suffix-icon="el-icon-date" v-model="ruleForm.tel" class='inpwidth'>
             </el-input>
         </el-form-item>
-        <!-- 服务时间 -->
+        <!-- 服务时间-->
         <el-form-item label="服务时间" required>
             <div class="block">
             	<el-time-select
@@ -190,7 +190,7 @@
 	    	var userid=parseInt(sessionStorage.getItem("userid"));
 	    	var phone=sessionStorage.getItem("phone");
             console.log('-----------999999店铺设置ajax请求前-------------');
-	    	this.axios.get("/home/api/getshopsetupinfo?userid="+userid+"&phone="+phone).then(function(res) {
+	    	this.$http.get("/home/api/getshopsetupinfo?userid="+userid+"&phone="+phone).then(function(res) {
                 var datad=res.data.data;                
                 console.log('-----------））））-店铺设置ajax请求成功-------------',res);
                 if(res.data.success==true){                    
@@ -356,7 +356,7 @@
                     let config = {
                         headers: {'Content-Type': 'multipart/form-data'}
                     }
-                    this.axios.post("http://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
+                    this.$http.post("https://web.image.myqcloud.com/photos/v2/10061631/coach/0/?sign=" +_this.sign,
                      formData,config
                     ).then(function(res){
                          //console.log('---999999---formData上传格式----------',formData);
